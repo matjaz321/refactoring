@@ -54,21 +54,25 @@ class PerformanceResult {
         ).format(number/100);
     }
 
+    _totalVolumeCredits(performances) {
+        let volumeCredits = 0;
+        for (let perf of performances) {
+            volumeCredits += this._volumeCreditsFor(perf);
+        }
+
+        return volumeCredits;
+    }
 
     showResult(invoice) {
         let totalAmount = 0;
-        let volumeCredits = 0;
         let result = `Statemnt for ${invoice.customer}\n`;
         for (let perf of invoice.performances) {  
-            volumeCredits += this._volumeCreditsFor(perf);
-
             result += `  ${this._playFor(perf).name}: ${this._usd(this._amountFor(perf))} (${perf.audience} seats)\n`;
             totalAmount += this._amountFor(perf);
         }
-    
-    
+
         result += `Amount owed is ${this._usd(totalAmount)}\n`;
-        result += `You earned ${volumeCredits} credits\n`;
+        result += `You earned ${this._totalVolumeCredits(invoice.performances)} credits\n`;
         return result;
     }
     
