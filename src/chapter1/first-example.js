@@ -1,31 +1,39 @@
 'use strict';
 
-const amountFor = (performance, play) => {
-    let result = 0;
-
-    switch (play.type) {
-        case 'tragedy':
-            result = 40000;
-            if (performance.audience > 30) {
-                result += 1000 * (performance.audience - 30);
-            }
-        break;
-        case 'comedy':
-            result = 30000;
-            if (performance.audience > 20) {
-                result += 10000 + 500 * (performance.audience - 20);
-            }
-            result += 300 * performance.audience;
-        break;
-        default:
-            throw new Error(`unkown type: ${play.type}`);
+class PerformanceResult {
+    constructor(plays) {
+        this._plays = plays;
     }
 
-    return result;
-};
+    _playFor(performance) {
+        return this._plays[performance.playID];
+    }
 
-class PerformanceResult {
-    showResult(invoice, plays) {
+    _amountFor(performance, play) {
+        let result = 0;
+    
+        switch (play.type) {
+            case 'tragedy':
+                result = 40000;
+                if (performance.audience > 30) {
+                    result += 1000 * (performance.audience - 30);
+                }
+            break;
+            case 'comedy':
+                result = 30000;
+                if (performance.audience > 20) {
+                    result += 10000 + 500 * (performance.audience - 20);
+                }
+                result += 300 * performance.audience;
+            break;
+            default:
+                throw new Error(`unkown type: ${play.type}`);
+        }
+    
+        return result;
+    }
+
+    showResult(invoice) {
         let totalAmount = 0;
         let volumeCredits = 0;
         let result = `Statemnt for ${invoice.customer}\n`;
@@ -38,8 +46,8 @@ class PerformanceResult {
             }
         ).format;
         for (let perf of invoice.performances) {
-            const play = plays[perf.playID];
-            let thisAmount = amountFor(perf, play);
+            const play = this._playFor(perf);
+            let thisAmount = this._amountFor(perf, play);
     
             volumeCredits += Math.max(perf.audience - 30, 0);
             if ('comedy' === play.type) volumeCredits += Math.floor(perf.audience / 5);
