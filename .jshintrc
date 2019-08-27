@@ -1,0 +1,21 @@
+{
+    "esversion": 6,
+    "curly": true,
+    "undef": true,
+    "unused": true,
+    "eqeqeq": true,
+    "latedef": true,
+    "noarg": true,
+    "varstmt": true,
+    "node": true,
+    "globals"   : {
+        "describe"   : false,
+        "it"         : false,
+        "before"     : false,
+        "beforeEach" : false,
+        "after"      : false,
+        "afterEach"  : false,
+        "expect"	 : false,
+        "assertEquals": false
+    }
+}
