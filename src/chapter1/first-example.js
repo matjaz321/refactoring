@@ -9,7 +9,8 @@ class PerformanceResult {
         return this._plays[performance.playID];
     }
 
-    _amountFor(performance, play) {
+    _amountFor(performance) {
+        const play = this._playFor(performance);
         let result = 0;
     
         switch (play.type) {
@@ -33,6 +34,15 @@ class PerformanceResult {
         return result;
     }
 
+    _volumeCreditsFor(performance) {
+        let result = 0;
+        result += Math.max(performance.audience - 30, 0);
+        if ('comedy' === this._playFor(performance).type) {
+            result += Math.floor(performance.audience / 5);
+        }
+        return result;
+    }
+
     showResult(invoice) {
         let totalAmount = 0;
         let volumeCredits = 0;
@@ -45,16 +55,12 @@ class PerformanceResult {
                 minimumFractionDigits: 2
             }
         ).format;
-        for (let perf of invoice.performances) {
-            const play = this._playFor(perf);
-            let thisAmount = this._amountFor(perf, play);
+        for (let perf of invoice.performances) {  
+            volumeCredits += this._volumeCreditsFor(perf);
+
     
-            volumeCredits += Math.max(perf.audience - 30, 0);
-            if ('comedy' === play.type) volumeCredits += Math.floor(perf.audience / 5);
-    
-            result += `  ${play.name}: ${format(thisAmount/100)} (${perf.audience} seats)\n`;
-        
-            totalAmount += thisAmount;
+            result += `  ${this._playFor(perf).name}: ${format(this._amountFor(perf)/100)} (${perf.audience} seats)\n`;
+            totalAmount += this._amountFor(perf);
         }
     
     
