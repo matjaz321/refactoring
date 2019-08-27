@@ -24,32 +24,37 @@ const amountFor = (performance, play) => {
     return result;
 };
 
-export default function showResult(invoice, plays) {
-    let totalAmount = 0;
-    let volumeCredits = 0;
-    let result = `Statemnt for ${invoice.customer}\n`;
-    const format = new Intl.NumberFormat(
-        'en-US',
-        {
-            style: 'currency',
-            'currency': 'USD',
-            minimumFractionDigits: 2
-        }
-    ).format;
-    for (let perf of invoice.performances) {
-        const play = plays[perf.playID];
-        let result = amountFor(perf, play);
-
-        volumeCredits += Math.max(perf.audience - 30, 0);
-        if ('comedy' === play.type) volumeCredits += Math.floor(perf.audience / 5);
-
-        result += `  ${play.name}: ${format(result/100)} (${perf.audience} seats)\n`;
+class PerformanceResult {
+    showResult(invoice, plays) {
+        let totalAmount = 0;
+        let volumeCredits = 0;
+        let result = `Statemnt for ${invoice.customer}\n`;
+        const format = new Intl.NumberFormat(
+            'en-US',
+            {
+                style: 'currency',
+                'currency': 'USD',
+                minimumFractionDigits: 2
+            }
+        ).format;
+        for (let perf of invoice.performances) {
+            const play = plays[perf.playID];
+            let thisAmount = amountFor(perf, play);
     
-        totalAmount+= result;
+            volumeCredits += Math.max(perf.audience - 30, 0);
+            if ('comedy' === play.type) volumeCredits += Math.floor(perf.audience / 5);
+    
+            result += `  ${play.name}: ${format(thisAmount/100)} (${perf.audience} seats)\n`;
+        
+            totalAmount += thisAmount;
+        }
+    
+    
+        result += `Amount owed is ${format(totalAmount/100)}\n`;
+        result += `You earned ${volumeCredits} credits\n`;
+        return result;
     }
+    
+}
 
-
-    result += `Amount owed is ${format(totalAmount/100)}\n`;
-    result += `You earned ${volumeCredits} credits\n`;
-    return result;
-};
+export default PerformanceResult;
