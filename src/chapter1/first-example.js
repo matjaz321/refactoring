@@ -43,28 +43,30 @@ class PerformanceResult {
         return result;
     }
 
-    showResult(invoice) {
-        let totalAmount = 0;
-        let volumeCredits = 0;
-        let result = `Statemnt for ${invoice.customer}\n`;
-        const format = new Intl.NumberFormat(
+    _format(number) {
+        return  new Intl.NumberFormat(
             'en-US',
             {
                 style: 'currency',
                 'currency': 'USD',
                 minimumFractionDigits: 2
             }
-        ).format;
+        ).format(number);
+    }
+
+    showResult(invoice) {
+        let totalAmount = 0;
+        let volumeCredits = 0;
+        let result = `Statemnt for ${invoice.customer}\n`;
         for (let perf of invoice.performances) {  
             volumeCredits += this._volumeCreditsFor(perf);
 
-    
-            result += `  ${this._playFor(perf).name}: ${format(this._amountFor(perf)/100)} (${perf.audience} seats)\n`;
+            result += `  ${this._playFor(perf).name}: ${this._format(this._amountFor(perf)/100)} (${perf.audience} seats)\n`;
             totalAmount += this._amountFor(perf);
         }
     
     
-        result += `Amount owed is ${format(totalAmount/100)}\n`;
+        result += `Amount owed is ${this._format(totalAmount/100)}\n`;
         result += `You earned ${volumeCredits} credits\n`;
         return result;
     }
