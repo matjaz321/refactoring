@@ -43,7 +43,7 @@ class PerformanceResult {
         return result;
     }
 
-    _format(number) {
+    _usd(number) {
         return  new Intl.NumberFormat(
             'en-US',
             {
@@ -51,8 +51,9 @@ class PerformanceResult {
                 'currency': 'USD',
                 minimumFractionDigits: 2
             }
-        ).format(number);
+        ).format(number/100);
     }
+
 
     showResult(invoice) {
         let totalAmount = 0;
@@ -61,12 +62,12 @@ class PerformanceResult {
         for (let perf of invoice.performances) {  
             volumeCredits += this._volumeCreditsFor(perf);
 
-            result += `  ${this._playFor(perf).name}: ${this._format(this._amountFor(perf)/100)} (${perf.audience} seats)\n`;
+            result += `  ${this._playFor(perf).name}: ${this._usd(this._amountFor(perf))} (${perf.audience} seats)\n`;
             totalAmount += this._amountFor(perf);
         }
     
     
-        result += `Amount owed is ${this._format(totalAmount/100)}\n`;
+        result += `Amount owed is ${this._usd(totalAmount)}\n`;
         result += `You earned ${volumeCredits} credits\n`;
         return result;
     }
