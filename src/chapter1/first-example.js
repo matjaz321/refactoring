@@ -1,8 +1,9 @@
 'use strict';
 
 class PerformanceResult {
-    constructor(plays) {
+    constructor(plays, invoice) {
         this._plays = plays;
+        this._invoice = invoice;
     }
 
     _playFor(performance) {
@@ -55,24 +56,31 @@ class PerformanceResult {
     }
 
     _totalVolumeCredits(performances) {
-        let volumeCredits = 0;
+        let result = 0;
         for (let perf of performances) {
-            volumeCredits += this._volumeCreditsFor(perf);
+            result += this._volumeCreditsFor(perf);
         }
 
-        return volumeCredits;
+        return result;
     }
 
-    showResult(invoice) {
-        let totalAmount = 0;
-        let result = `Statemnt for ${invoice.customer}\n`;
-        for (let perf of invoice.performances) {  
-            result += `  ${this._playFor(perf).name}: ${this._usd(this._amountFor(perf))} (${perf.audience} seats)\n`;
-            totalAmount += this._amountFor(perf);
+    _totalAmount() {
+        let result = 0;
+        for (let perf of this._invoice.performances) {  
+            result += this._amountFor(perf);
         }
 
-        result += `Amount owed is ${this._usd(totalAmount)}\n`;
-        result += `You earned ${this._totalVolumeCredits(invoice.performances)} credits\n`;
+        return result;
+
+    }
+
+    showResult() {
+        let result = `Statemnt for ${this._invoice.customer}\n`;
+        for (let perf of this._invoice.performances) {  
+            result += `  ${this._playFor(perf).name}: ${this._usd(this._amountFor(perf))} (${perf.audience} seats)\n`;
+        }
+        result += `Amount owed is ${this._usd(this._totalAmount())}\n`;
+        result += `You earned ${this._totalVolumeCredits(this._invoice.performances)} credits\n`;
         return result;
     }
     
