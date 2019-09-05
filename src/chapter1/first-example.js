@@ -13,6 +13,7 @@ class PerformanceResult {
         const result = Object.assign({}, performance);
         result.play = self._playFor(result);
         result.amount = self._amountFor(result);
+        result.volumeCredits = self._volumeCreditsFor(result);
         return result;
     }
 
@@ -68,7 +69,7 @@ class PerformanceResult {
     _totalVolumeCredits() {
         let result = 0;
         for (let perf of this._performances) {
-            result += this._volumeCreditsFor(perf);
+            result += perf.volumeCredits;
         }
 
         return result;
